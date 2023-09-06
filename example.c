@@ -49,7 +49,7 @@ int main() {
      * 对应类型数据的数量：3
      * 是否支持循环覆盖：是
      */
-    ring_def(EVENT, events_buffer, 3, 1);
+    ring_define(EVENT, events_buffer, 3, 1);
     printf("size: %zd\n", sizeof(events_buffer));
 
     /* 将单个数据放入 ring_fifo

@@ -4,20 +4,18 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define _CCM_DATA __attribute__((section(".ccmram.data")))
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct {
-    void *buffer;                 // 数据块地址
+    const void *buffer;           // 数据块地址
     const uint16_t capacity;      // 数据最大存放个数
     const uint16_t element_size;  // 单个数据占用的字节数
     const uint16_t cover;         // 是否支持覆盖
-    int16_t head;                 // 起始下标
-    int16_t tail;                 // 结尾下标
-    int16_t size;                 // 数据实际个数
+    uint16_t head;                // 起始下标
+    uint16_t tail;                // 结尾下标
+    uint16_t size;                // 数据实际个数
 } RING_FIFO;
 
 /**
@@ -28,9 +26,29 @@ typedef struct {
  * @param  Cover 是否支持覆盖 (0 / 1)
  * @retval None
  */
-#define ring_def(Type, BufName, Size, Cover)           \
+#define ring_define(Type, BufName, Size, Cover)        \
     Type __##BufName##_data[Size];                     \
     RING_FIFO BufName = {                              \
+        .buffer = __##BufName##_data,                  \
+        .capacity = Size,                              \
+        .element_size = sizeof(__##BufName##_data[0]), \
+        .cover = Cover,                                \
+        .head = 0,                                     \
+        .tail = 0,                                     \
+        .size = 0,                                     \
+    }
+
+/**
+ * @brief  定义 RING_FIFO 静态变量
+ * @param  Type 存放的数据类型
+ * @param  BufName RING_FIFO 变量名称
+ * @param  Size 最多可以存放的数据数量
+ * @param  Cover 是否支持覆盖 (0 / 1)
+ * @retval None
+ */
+#define ring_define_static(Type, BufName, Size, Cover) \
+    static Type __##BufName##_data[Size];              \
+    static RING_FIFO BufName = {                       \
         .buffer = __##BufName##_data,                  \
         .capacity = Size,                              \
         .element_size = sizeof(__##BufName##_data[0]), \
@@ -100,7 +118,7 @@ int8_t ring_is_full(RING_FIFO *ring);
  * @param  ring RING_FIFO 变量的地址
  * @retval RING_FIFO 内实际数据数量
  */
-int16_t ring_size(RING_FIFO *ring);
+uint16_t ring_size(RING_FIFO *ring);
 
 /**
  * @brief  打印 RING_FIFO 内部信息

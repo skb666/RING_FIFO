@@ -4,7 +4,7 @@
 
 + 支持任意 POD 类型数据
 + 支持单个数据存取
-+ 支持多个数据类型存取
++ 支持多个数据存取
 + 支持循环覆盖或标准模式
 
 为了兼容嵌入式，未实现锁机制，若需要则在此通用环形队列的基础上再根据需求自行封装一层接口。
@@ -19,7 +19,7 @@
 
 ```bash
 cmake -S. -Bbuild
-cmake --build build --target all
+cmake --build build --target all -- -j${nproc}
 ```
 
 ## 外部接口
@@ -33,7 +33,7 @@ cmake --build build --target all
  * @param  Cover 是否支持覆盖 (0 / 1)
  * @retval None
  */
-#define ring_def(Type, BufName, Size, Cover)           \
+#define ring_define(Type, BufName, Size, Cover)        \
     Type __##BufName##_data[Size];                     \
     RING_FIFO BufName = {                              \
         .buffer = __##BufName##_data,                  \
@@ -44,6 +44,27 @@ cmake --build build --target all
         .tail = 0,                                     \
         .size = 0,                                     \
     }
+
+/**
+ * @brief  定义 RING_FIFO 静态变量
+ * @param  Type 存放的数据类型
+ * @param  BufName RING_FIFO 变量名称
+ * @param  Size 最多可以存放的数据数量
+ * @param  Cover 是否支持覆盖 (0 / 1)
+ * @retval None
+ */
+#define ring_define_static(Type, BufName, Size, Cover) \
+    static Type __##BufName##_data[Size];              \
+    static RING_FIFO BufName = {                       \
+        .buffer = __##BufName##_data,                  \
+        .capacity = Size,                              \
+        .element_size = sizeof(__##BufName##_data[0]), \
+        .cover = Cover,                                \
+        .head = 0,                                     \
+        .tail = 0,                                     \
+        .size = 0,                                     \
+    }
+
 
 /**
  * @brief  放入单个数据
@@ -105,7 +126,7 @@ int8_t ring_is_full(RING_FIFO *ring);
  * @param  ring RING_FIFO 变量的地址
  * @retval RING_FIFO 内实际数据数量
  */
-int16_t ring_size(RING_FIFO *ring);
+uint16_t ring_size(RING_FIFO *ring);
 
 /**
  * @brief  打印 RING_FIFO 内部信息

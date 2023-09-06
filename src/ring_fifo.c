@@ -176,7 +176,7 @@ int8_t ring_is_full(RING_FIFO *ring) {
     return (ring->size >= ring->capacity);
 }
 
-int16_t ring_size(RING_FIFO *ring) {
+uint16_t ring_size(RING_FIFO *ring) {
     return ring->size;
 }
 
@@ -185,8 +185,8 @@ void print_ring(RING_FIFO *ring) {
     printf("cover: %hu\n", ring->cover);
     printf("element_size: %hu\n", ring->element_size);
     printf("capacity: %hu\n", ring->capacity);
-    printf("head: %hd\n", ring->head);
-    printf("tail: %hd\n", ring->tail);
-    printf("size: %hd\n", ring->size);
+    printf("head: %hu\n", ring->head);
+    printf("tail: %hu\n", ring->tail);
+    printf("size: %hu\n", ring->size);
     printf("--------------------------\n");
 }

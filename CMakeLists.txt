@@ -13,17 +13,17 @@ project(example LANGUAGES C CXX)
 # set(CMAKE_C_COMPILER "gcc")
 # set(CMAKE_CXX_COMPILER "g++")
 
-# 添加编译参数 -Wall -O2
-# add_compile_options(-Wall -O2)
+# 添加编译参数
+add_compile_options(-Wall -fdata-sections -ffunction-sections)
 
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_FLAGS "-Wall -fPIC")
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g -D DEBUG")
-set(CMAKE_C_FLAGS_RELEASE "-O2 -s")
+set(CMAKE_C_FLAGS "-fPIC")
+set(CMAKE_C_FLAGS_DEBUG "-O2 -g -D DEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-Os")
 
 # 存放可执行软件的目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/output/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/output/bin)
 # 默认存放静态库的文件夹位置
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/output/archive)
 # 默认存放动态库的文件夹位置
@@ -33,7 +33,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/output/library)
 # add_subdirectory(lib)
 
 # ring_fifo 源文件
-aux_source_directory(src SRCS)
+file(GLOB_RECURSE SRCS "src/*.c")
 add_library(ring_fifo STATIC ${SRCS})
 # ring_fifo 头文件路径
 target_include_directories(ring_fifo PUBLIC inc)
@@ -46,7 +46,7 @@ target_link_libraries(example ring_fifo)
 # 编译后执行
 add_custom_command(
     TARGET example POST_BUILD
-    COMMAND ./output/bin/example
-    WORKING_DIRECTORY ..
+    COMMAND ./bin/example
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/output
 )
 
