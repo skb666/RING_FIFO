@@ -19,7 +19,10 @@
 
 ```bash
 cmake -S. -Bbuild
-cmake --build build --target all -- -j${nproc}
+cmake --build build --target example -- -j${nproc}      # 16 位目标
+cmake --build build --target example32 -- -j${nproc}    # 32 位目标
+cmake --build build --target example64 -- -j${nproc}    # 64 位目标
+cmake --build build --target all -- -j${nproc}          # 以上所有
 ```
 
 ## 外部接口
@@ -65,7 +68,6 @@ cmake --build build --target all -- -j${nproc}
         .size = 0,                                     \
     }
 
-
 /**
  * @brief  放入单个数据
  * @param  ring RING_FIFO 变量的地址
@@ -89,7 +91,7 @@ int8_t ring_pop(RING_FIFO *ring, void *element);
  * @param  num 待存入数据的个数
  * @retval 成功放入几个（支持覆盖时，参数正确传入则返回值与数据个数相等）
  */
-uint16_t ring_push_mult(RING_FIFO *ring, const void *elements, uint16_t num);
+NUM_TYPE ring_push_mult(RING_FIFO *ring, const void *elements, NUM_TYPE num);
 
 /**
  * @brief  取出多个数据
@@ -98,7 +100,7 @@ uint16_t ring_push_mult(RING_FIFO *ring, const void *elements, uint16_t num);
  * @param  num 待取出数据的个数
  * @retval 成功取出几个
  */
-uint16_t ring_pop_mult(RING_FIFO *ring, void *elements, uint16_t num);
+NUM_TYPE ring_pop_mult(RING_FIFO *ring, void *elements, NUM_TYPE num);
 
 /**
  * @brief  重置 RING_FIFO
@@ -126,7 +128,7 @@ int8_t ring_is_full(RING_FIFO *ring);
  * @param  ring RING_FIFO 变量的地址
  * @retval RING_FIFO 内实际数据数量
  */
-uint16_t ring_size(RING_FIFO *ring);
+NUM_TYPE ring_size(RING_FIFO *ring);
 
 /**
  * @brief  打印 RING_FIFO 内部信息

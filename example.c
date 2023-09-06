@@ -22,7 +22,7 @@ typedef struct {
 } EVENT;
 
 int main() {
-    int cnt;
+    int res;
     EVENT ev_o[4];
     EVENT ev[] = {
         {
@@ -49,7 +49,7 @@ int main() {
      * 对应类型数据的数量：3
      * 是否支持循环覆盖：是
      */
-    ring_define(EVENT, events_buffer, 3, 1);
+    ring_define_static(EVENT, events_buffer, 3, 1);
     printf("size: %zd\n", sizeof(events_buffer));
 
     /* 将单个数据放入 ring_fifo
@@ -66,8 +66,8 @@ int main() {
      * 待存入数组数据的个数：3
      * 返回值：成功放入几个（支持覆盖时，参数正确传入则返回值与数据个数相等）
      */
-    cnt = ring_push_mult(&events_buffer, ev + 1, 3);
-    printf("success: %hu\n", cnt);
+    res = ring_push_mult(&events_buffer, ev + 1, 3);
+    printf("success: %d\n", res);
     print_ring(&events_buffer);
 
     /* 从 ring_fifo 取出单个数据
@@ -75,8 +75,8 @@ int main() {
      * 取出数据的存放地址：&ev_o[0]
      * 返回值：是否成功取出
      */
-    cnt = ring_pop(&events_buffer, &ev_o[0]);
-    if (cnt >= 0) {
+    res = ring_pop(&events_buffer, &ev_o[0]);
+    if (res >= 0) {
         printf("ev_o->type: %d\n", ev_o[0].type);
         printf("ev_o->subtype: %d\n", ev_o[0].sub_type);
     }
@@ -87,12 +87,14 @@ int main() {
      * 待取出数据的个数：4
      * 返回值：成功取出几个
      */
-    cnt = ring_pop_mult(&events_buffer, ev_o, 4);
-    printf("success: %hu\n", cnt);
-    for (int i = 0; i < cnt; ++i) {
+    res = ring_pop_mult(&events_buffer, ev_o, 4);
+    printf("success: %d\n", res);
+    for (int i = 0; i < res; ++i) {
         printf("ev_o->type: %d\n", ev_o[i].type);
         printf("ev_o->subtype: %d\n", ev_o[i].sub_type);
     }
+
+    printf("\033[1;34m[EXAMLE: \033[1;31m%zdbit\033[1;34m]\033[0;32m OK!!!\033[0m\n", sizeof(NUM_TYPE) * 8);
 
     return 0;
 }

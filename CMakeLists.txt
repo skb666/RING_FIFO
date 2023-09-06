@@ -32,11 +32,26 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/output/library)
 # 递归调用子文件的 CMakeLists.txt
 # add_subdirectory(lib)
 
+# file(GLOB_RECURSE SRCS "src/*.c")
+
 # ring_fifo 源文件
-file(GLOB_RECURSE SRCS "src/*.c")
-add_library(ring_fifo STATIC ${SRCS})
+add_library(ring_fifo STATIC src/ring_fifo.c)
 # ring_fifo 头文件路径
 target_include_directories(ring_fifo PUBLIC inc)
+
+# ring_fifo_32 源文件
+add_library(ring_fifo_32 STATIC src/ring_fifo.c)
+# ring_fifo_32 头文件路径
+target_include_directories(ring_fifo_32 PUBLIC inc)
+# 目标宏定义
+target_compile_definitions(ring_fifo_32 PUBLIC NUM_TYPE=uint32_t)
+
+# ring_fifo_64 源文件
+add_library(ring_fifo_64 STATIC src/ring_fifo.c)
+# ring_fifo_64 头文件路径
+target_include_directories(ring_fifo_64 PUBLIC inc)
+# 目标宏定义
+target_compile_definitions(ring_fifo_64 PUBLIC NUM_TYPE=uint64_t)
 
 # example
 add_executable(example example.c)
@@ -50,3 +65,26 @@ add_custom_command(
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/output
 )
 
+# example32
+add_executable(example32 example.c)
+# 目标需要链接的库
+target_link_libraries(example32 ring_fifo_32)
+
+# 编译后执行
+add_custom_command(
+    TARGET example32 POST_BUILD
+    COMMAND ./bin/example32
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/output
+)
+
+# example64
+add_executable(example64 example.c)
+# 目标需要链接的库
+target_link_libraries(example64 ring_fifo_64)
+
+# 编译后执行
+add_custom_command(
+    TARGET example64 POST_BUILD
+    COMMAND ./bin/example64
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/output
+)

@@ -45,11 +45,11 @@ int8_t ring_pop(RING_FIFO *ring, void *element) {
     return 0;
 }
 
-uint16_t ring_push_mult(RING_FIFO *ring, const void *elements, uint16_t num) {
+NUM_TYPE ring_push_mult(RING_FIFO *ring, const void *elements, NUM_TYPE num) {
     uint8_t *inbuf = NULL;
     uint8_t *outbuf = NULL;
-    uint16_t cnt = 0, remain = 0;
-    uint16_t tmp = 0;
+    NUM_TYPE cnt = 0, remain = 0;
+    NUM_TYPE tmp = 0;
 
     if (ring == NULL || elements == NULL || num == 0) {
         return 0;
@@ -124,11 +124,11 @@ uint16_t ring_push_mult(RING_FIFO *ring, const void *elements, uint16_t num) {
     return cnt;
 }
 
-uint16_t ring_pop_mult(RING_FIFO *ring, void *elements, uint16_t num) {
+NUM_TYPE ring_pop_mult(RING_FIFO *ring, void *elements, NUM_TYPE num) {
     uint8_t *inbuf = NULL;
     uint8_t *outbuf = NULL;
-    uint16_t cnt = 0;
-    uint16_t tmp = 0;
+    NUM_TYPE cnt = 0;
+    NUM_TYPE tmp = 0;
 
     if (ring == NULL || elements == NULL || num == 0 || ring->size == 0) {
         return 0;
@@ -176,17 +176,17 @@ int8_t ring_is_full(RING_FIFO *ring) {
     return (ring->size >= ring->capacity);
 }
 
-uint16_t ring_size(RING_FIFO *ring) {
+NUM_TYPE ring_size(RING_FIFO *ring) {
     return ring->size;
 }
 
 void print_ring(RING_FIFO *ring) {
     printf("========== ring ==========\n");
-    printf("cover: %hu\n", ring->cover);
-    printf("element_size: %hu\n", ring->element_size);
-    printf("capacity: %hu\n", ring->capacity);
-    printf("head: %hu\n", ring->head);
-    printf("tail: %hu\n", ring->tail);
-    printf("size: %hu\n", ring->size);
+    printf("cover: %lu\n", (uint64_t)ring->cover);
+    printf("element_size: %lu\n", (uint64_t)ring->element_size);
+    printf("capacity: %lu\n", (uint64_t)ring->capacity);
+    printf("head: %lu\n", (uint64_t)ring->head);
+    printf("tail: %lu\n", (uint64_t)ring->tail);
+    printf("size: %lu\n", (uint64_t)ring->size);
     printf("--------------------------\n");
 }
