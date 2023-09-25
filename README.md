@@ -85,6 +85,14 @@ int8_t ring_push(RING_FIFO *ring, const void *element);
 int8_t ring_pop(RING_FIFO *ring, void *element);
 
 /**
+ * @brief  查看下一个会被取出的数据
+ * @param  ring RING_FIFO 变量的地址
+ * @param  element 数据的存放地址
+ * @retval 是否成功，失败时返回值小于 0
+ */
+int8_t ring_peek(RING_FIFO *ring, void *element);
+
+/**
  * @brief  放入多个数据
  * @param  ring RING_FIFO 变量的地址
  * @param  elements 待存入数据块的首地址
