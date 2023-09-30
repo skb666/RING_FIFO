@@ -5,7 +5,8 @@
 + 支持任意 POD 类型数据
 + 支持单个数据存取
 + 支持多个数据存取
-+ 支持循环覆盖或标准模式
++ 支持循环覆盖或非覆盖模式
++ 非覆盖模式下可以当作优先队列使用
 
 为了兼容嵌入式，未实现锁机制，若需要则在此通用环形队列的基础上再根据需求自行封装一层接口。
 
@@ -75,6 +76,15 @@ cmake --build build --target all -- -j${nproc}          # 以上所有
  * @retval 是否成功放入，失败时返回值小于 0（支持覆盖时，参数正确传入则永远返回0）
  */
 int8_t ring_push(RING_FIFO *ring, const void *element);
+
+/**
+ * @brief  优先队列，二分插入（仅在非覆盖模式下可用）
+ * @param  ring RING_FIFO 变量的地址
+ * @param  element 待存入数据的地址
+ * @param  compare 比较 element 的函数，返回值 [-1, 0, 1]
+ * @retval 是否成功放入，失败时返回值小于 0
+ */
+int8_t ring_binsert(RING_FIFO *ring, const void *element, int (*compare)(const void *, const void *));
 
 /**
  * @brief  取出单个数据
