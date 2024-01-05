@@ -23,6 +23,7 @@ typedef struct {
 
 int main() {
     int res;
+    EVENT *ptr;
     EVENT ev_o[4];
     EVENT ev[] = {
         {
@@ -57,6 +58,7 @@ int main() {
      * 待存入数据的地址：&ev[0]
      * 返回值：是否成功放入（支持覆盖时，参数正确传入则永远返回0）
      */
+    printf("\nring_push\n");
     ring_push(&events_buffer, &ev[0]);
     print_ring(&events_buffer);
 
@@ -66,8 +68,21 @@ int main() {
      * 待存入数组数据的个数：3
      * 返回值：成功放入几个（支持覆盖时，参数正确传入则返回值与数据个数相等）
      */
+    printf("\nring_push_mult\n");
     res = ring_push_mult(&events_buffer, ev + 1, 3);
     printf("success: %d\n", res);
+    print_ring(&events_buffer);
+
+    /* 查看 ring_fifo 下一个被取出的数据
+     * ring_fifo 变量地址：&events_buffer
+     * 返回值：是否成功取出
+     */
+    printf("\nring_peek\n");
+    ptr = ring_peek(&events_buffer);
+    if (ptr) {
+        printf("ev_o->type: %d\n", ptr->type);
+        printf("ev_o->subtype: %d\n", ptr->sub_type);
+    }
     print_ring(&events_buffer);
 
     /* 从 ring_fifo 取出单个数据
@@ -75,11 +90,29 @@ int main() {
      * 取出数据的存放地址：&ev_o[0]
      * 返回值：是否成功取出
      */
+    printf("\nring_pop\n");
     res = ring_pop(&events_buffer, &ev_o[0]);
     if (res >= 0) {
         printf("ev_o->type: %d\n", ev_o[0].type);
         printf("ev_o->subtype: %d\n", ev_o[0].sub_type);
     }
+    print_ring(&events_buffer);
+
+    /* 遍历 ring_fifo 中存在的数据，不取出
+     * ring_fifo 变量地址：&events_buffer
+     * 当前数据地址：ptr
+     * 返回值：ptr 传入 NULL 时返回数据首地址，有下一个数据时返回下一个数据地址，否则返回 NULL
+     */
+    printf("\nring_peek_next\n");
+    ptr = NULL;
+    do {
+        ptr = ring_peek_next(&events_buffer, ptr);
+        if (ptr) {
+            printf("ev_o->type: %d\n", ptr->type);
+            printf("ev_o->subtype: %d\n", ptr->sub_type);
+        }
+    } while (ptr);
+    print_ring(&events_buffer);
 
     /* 从 ring_fifo 取出多个数据
      * ring_fifo 变量地址：&events_buffer
@@ -87,12 +120,14 @@ int main() {
      * 待取出数据的个数：4
      * 返回值：成功取出几个
      */
+    printf("\nring_pop_mult\n");
     res = ring_pop_mult(&events_buffer, ev_o, 4);
     printf("success: %d\n", res);
     for (int i = 0; i < res; ++i) {
         printf("ev_o->type: %d\n", ev_o[i].type);
         printf("ev_o->subtype: %d\n", ev_o[i].sub_type);
     }
+    print_ring(&events_buffer);
 
     printf("\033[1;34m[EXAMLE: \033[1;31m%zdbit\033[1;34m]\033[0;32m OK!!!\033[0m\n", sizeof(NUM_TYPE) * 8);
 
