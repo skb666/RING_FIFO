@@ -326,6 +326,14 @@ NUM_TYPE ring_size(RING_FIFO *ring) {
     return ring->size;
 }
 
+NUM_TYPE ring_capacity(RING_FIFO *ring) {
+    return ring->capacity;
+}
+
+NUM_TYPE ring_available(RING_FIFO *ring) {
+    return ring->capacity - ring->size;
+}
+
 void print_ring(RING_FIFO *ring) {
     printf("========== ring ==========\n");
     printf("cover: %lu\n", (uint64_t)ring->cover);
